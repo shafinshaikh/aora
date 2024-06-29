@@ -9,7 +9,7 @@ const Profile = () => {
     const handleLogout = async () => {
         try {
             await account.deleteSession('current');
-            navigation.navigate('SignIn');
+            router.push("/sign-in");
         } catch (error) {
             console.error(error);
         }
