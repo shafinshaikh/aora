@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { Link, router } from "expo-router";
+import { View, Text, TextInput, Button, Alert, StyleSheet } from 'react-native';
 import { account } from '../../lib/appwrite';
 
 const SignIn = ({ navigation }) => {
@@ -8,8 +9,18 @@ const SignIn = ({ navigation }) => {
 
     const handleSignIn = async () => {
         try {
+            // Check if there is an existing session and delete it
+            const sessions = await account.listSessions();
+            if (sessions.total > 0) {
+                for (const session of sessions.sessions) {
+                    await account.deleteSession(session.$id);
+                }
+            }
+            // Create a new session
             await account.createEmailSession(email, password);
-            navigation.navigate('Home');
+            Alert.alert("Success", "User signed in successfully");
+            router.replace("/home");
+            // navigation.navigate('/Home');
         } catch (error) {
             console.error(error);
         }
@@ -17,38 +28,49 @@ const SignIn = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-            <Text>Sign In</Text>
-            <TextInput
-                placeholder="Email"
-                value={email}
-                onChangeText={setEmail}
-                style={styles.input}
-            />
-            <TextInput
-                placeholder="Password"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-                style={styles.input}
-            />
-            <Button title="Sign In" onPress={handleSignIn} />
-            <Button title="Sign Up" onPress={() => navigation.navigate('SignUp')} />
-        </View>
-    );
+      <Text style={styles.title}>Sign In</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Email"
+        value={email}
+        onChangeText={(text) => setEmail(text)}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Password"
+        secureTextEntry
+        value={password}
+        onChangeText={(text) => setPassword(text)}
+      />
+      <Button title="Sign In" onPress={handleSignIn} />
+      <View style={styles.spacing} />
+      <Button title="Sign Up" onPress={() => navigation.navigate('SignUp')} />
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        padding: 16,
-    },
-    input: {
-        borderWidth: 1,
-        borderColor: '#ccc',
-        padding: 8,
-        marginVertical: 8,
-    },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 16,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  input: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 12,
+    padding: 8,
+  },
+  spacing: {
+    height: 16, // Adjust the height to increase/decrease the spacing
+  },
 });
 
 export default SignIn;

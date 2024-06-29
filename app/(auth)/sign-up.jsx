@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import { account } from '../../lib/appwrite';
-
+import 'react-native-get-random-values';
+import { v4 as uuidv4 } from 'uuid';
 
 const SignUp = ({ navigation }) => {
     const [email, setEmail] = useState('');
@@ -10,10 +11,10 @@ const SignUp = ({ navigation }) => {
 
     const handleSignUp = async () => {
         try {
-            await account.create('[USER_ID]', email, password, name);
+            await account.create(uuidv4(), email, password, name);
             navigation.navigate('SignIn');
         } catch (error) {
-            console.error(error);
+            console.error("Authentication error: ", error);
         }
     };
 
@@ -40,6 +41,7 @@ const SignUp = ({ navigation }) => {
                 style={styles.input}
             />
             <Button title="Sign Up" onPress={handleSignUp} />
+            <View style={styles.spacing} />
             <Button title="Sign In" onPress={() => navigation.navigate('SignIn')} />
         </View>
     );
@@ -57,6 +59,9 @@ const styles = StyleSheet.create({
         padding: 8,
         marginVertical: 8,
     },
+    spacing: {
+        height: 16, // Adjust the height to increase/decrease the spacing
+      },
 });
 
 export default SignUp;

@@ -36,21 +36,20 @@ const Welcome = () => {
 
           <View className="relative mt-5">
             <Text className="text-3xl text-white font-bold text-center">
-              Discover Endless{"\n"}
-              Possibilities with{" "}
-              <Text className="text-secondary-200">Aora</Text>
+              Your Home Solution{"\n"}
+              for Mechanics{" "}
+              <Text className="text-secondary-200">GarageMate</Text>
             </Text>
 
-            <Image
+            {/* <Image
               source={images.path}
-              className="w-[136px] h-[15px] absolute -bottom-2 -right-8"
+              className="w-[200px] h-[25px] absolute -bottom-5 right-4"
               resizeMode="contain"
-            />
+            /> */}
           </View>
 
           <Text className="text-sm font-pregular text-gray-100 mt-7 text-center">
-            Where Creativity Meets Innovation: Embark on a Journey of Limitless
-            Exploration with Aora
+            Book a free mechanic from your couch and get your car serviced in under 48h
           </Text>
 
           <CustomButton
