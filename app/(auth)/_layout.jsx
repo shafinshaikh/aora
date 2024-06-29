@@ -1,35 +1,16 @@
-import { Redirect, Stack } from "expo-router";
-import { StatusBar } from "expo-status-bar";
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import SignIn from './sign-in';
+import SignUp from './sign-up';
 
-import { Loader } from "../../components";
-import { useGlobalContext } from "../../context/GlobalProvider";
+const Stack = createNativeStackNavigator();
 
 const AuthLayout = () => {
-  const { loading, isLogged } = useGlobalContext();
-
-  if (!loading && isLogged) return <Redirect href="/home" />;
-
-  return (
-    <>
-      <Stack>
-        <Stack.Screen
-          name="sign-in"
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="sign-up"
-          options={{
-            headerShown: false,
-          }}
-        />
-      </Stack>
-
-      <Loader isLoading={loading} />
-      <StatusBar backgroundColor="#161622" style="light" />
-    </>
-  );
+    return (
+        <Stack.Navigator>
+            <Stack.Screen name="SignIn" component={SignIn} />
+            <Stack.Screen name="SignUp" component={SignUp} />
+        </Stack.Navigator>
+    );
 };
 
 export default AuthLayout;

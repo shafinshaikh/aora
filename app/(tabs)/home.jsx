@@ -1,88 +1,44 @@
-import { useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { FlatList, Image, RefreshControl, Text, View } from "react-native";
-
-import { images } from "../../constants";
-import useAppwrite from "../../lib/useAppwrite";
-import { getAllPosts, getLatestPosts } from "../../lib/appwrite";
-import { EmptyState, SearchInput, Trending, VideoCard } from "../../components";
+import React, { useEffect, useState } from 'react';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import { databases } from '../../lib/appwrite';
+import { useNavigation } from '@react-navigation/native';
 
 const Home = () => {
-  const { data: posts, refetch } = useAppwrite(getAllPosts);
-  const { data: latestPosts } = useAppwrite(getLatestPosts);
+    const [garages, setGarages] = useState([]);
+    const navigation = useNavigation();
 
-  const [refreshing, setRefreshing] = useState(false);
+    useEffect(() => {
+        const fetchGarages = async () => {
+            const response = await databases.listDocuments('667e9e7c00146f290854', '667eb5ba003a0ae2ed1a');
+            setGarages(response.documents);
+        };
 
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await refetch();
-    setRefreshing(false);
-  };
+        fetchGarages();
+    }, []);
 
-  // one flatlist
-  // with list header
-  // and horizontal flatlist
-
-  //  we cannot do that with just scrollview as there's both horizontal and vertical scroll (two flat lists, within trending)
-
-  return (
-    <SafeAreaView className="bg-primary">
-      <FlatList
-        data={posts}
-        keyExtractor={(item) => item.$id}
-        renderItem={({ item }) => (
-          <VideoCard
-            title={item.title}
-            thumbnail={item.thumbnail}
-            video={item.video}
-            creator={item.creator.username}
-            avatar={item.creator.avatar}
-          />
-        )}
-        ListHeaderComponent={() => (
-          <View className="flex my-6 px-4 space-y-6">
-            <View className="flex justify-between items-start flex-row mb-6">
-              <View>
-                <Text className="font-pmedium text-sm text-gray-100">
-                  Welcome Back
-                </Text>
-                <Text className="text-2xl font-psemibold text-white">
-                  JSMastery
-                </Text>
-              </View>
-
-              <View className="mt-1.5">
-                <Image
-                  source={images.logoSmall}
-                  className="w-9 h-10"
-                  resizeMode="contain"
-                />
-              </View>
-            </View>
-
-            <SearchInput />
-
-            <View className="w-full flex-1 pt-5 pb-8">
-              <Text className="text-lg font-pregular text-gray-100 mb-3">
-                Latest Videos
-              </Text>
-
-              <Trending posts={latestPosts ?? []} />
-            </View>
-          </View>
-        )}
-        ListEmptyComponent={() => (
-          <EmptyState
-            title="No Videos Found"
-            subtitle="No videos created yet"
-          />
-        )}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-      />
-    </SafeAreaView>
-  );
+    return (
+        <View style={styles.container}>
+            <Text style={styles.title}>Garages</Text>
+            <FlatList
+                data={garages}
+                keyExtractor={(item) => item.$id}
+                renderItem={({ item }) => (
+                    <TouchableOpacity onPress={() => navigation.navigate('GarageDetails', { garage: item })}>
+                        <View style={styles.item}>
+                            <Text style={styles.itemText}>{item.name}</Text>
+                        </View>
+                    </TouchableOpacity>
+                )}
+            />
+        </View>
+    );
 };
+
+const styles = StyleSheet.create({
+    container: { flex: 1, padding: 20 },
+    title: { fontSize: 24, fontWeight: 'bold' },
+    item: { padding: 10, borderBottomWidth: 1, borderBottomColor: '#ccc' },
+    itemText: { fontSize: 18 },
+});
 
 export default Home;

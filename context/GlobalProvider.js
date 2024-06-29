@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-
-import { getCurrentUser } from "../lib/appwrite";
+import { account, getCurrentUser } from "../lib/appwrite";
 
 const GlobalContext = createContext();
 export const useGlobalContext = () => useContext(GlobalContext);
@@ -11,23 +10,26 @@ const GlobalProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getCurrentUser()
-      .then((res) => {
-        if (res) {
-          setIsLogged(true);
-          setUser(res);
-        } else {
-          setIsLogged(false);
-          setUser(null);
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    authenticateUser();
   }, []);
+
+  const authenticateUser = async () => {
+    try {
+      await account.createAnonymousSession();
+      const res = await getCurrentUser();
+      if (res) {
+        setIsLogged(true);
+        setUser(res);
+      } else {
+        setIsLogged(false);
+        setUser(null);
+      }
+    } catch (error) {
+      console.log('Authentication error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <GlobalContext.Provider
