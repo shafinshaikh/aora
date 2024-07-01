@@ -106,9 +106,24 @@ const TabLayout = () => {
             ),
           }}
         />
+        <Tabs.Screen
+          name="garageOwnerProfile"
+          options={{
+            title: "garageOwnerProfile",
+            headerShown: false,
+            tabBarIcon: ({ color, focused }) => (
+              <TabIcon
+                icon={icons.profile}
+                color={color}
+                name="Details"
+                focused={focused}
+              />
+            ),
+          }}
+        />
       </Tabs>
 
-      <Loader isLoading={loading} />
+      {/* <Loader isLoading={loading} /> */}
       <StatusBar backgroundColor="#161622" style="light" />
     </>
   );

@@ -11,7 +11,6 @@ const SignIn = ({ navigation }) => {
         try {
             // Check if there is an existing session and delete it
             const sessions = await account.listSessions();
-            console.log("Sign-in.jsx handleSignIn() sessions: ", sessions)
             if (sessions.total > 0) {
                 for (const session of sessions.sessions) {
                     await account.deleteSession(session.$id);
